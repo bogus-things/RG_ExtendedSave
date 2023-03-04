@@ -8,6 +8,7 @@ A (limited) port of the ExtendedSave/ExtensibleSaveFormat plugins in [BepisPlugi
 ## Limitations
 - Currently `PluginData` only supports string values for its dictionary (fix in progress)
 - No support for the `Extensions` methods in the BepisPlugins original (fix impossible?)
+- No studio support yet
 
 ## Requirements
 - BetterRepack >= R1.4 (untested on lower versions or other configurations)
