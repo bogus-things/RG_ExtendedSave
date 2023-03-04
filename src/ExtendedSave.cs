@@ -5,6 +5,7 @@ using Il2CppSystem.Threading;
 using BepInEx.Logging;
 using UnhollowerBaseLib;
 using MessagePack.Resolvers;
+using System.Collections.Generic;
 
 namespace RGExtendedSave
 {
@@ -22,65 +23,75 @@ namespace RGExtendedSave
         // Whether extended data load events should be triggered. Temporarily disable it when extended data will never be used, for example loading lists of cards.
         public static bool LoadEventsEnabled = true;
 
-        internal static WeakKeyDictionary<ChaFile, ExtendedData> InternalCharaDictionary = new WeakKeyDictionary<ChaFile, ExtendedData>();
+        internal static Dictionary<IntPtr, ExtendedData> InternalCharaDictionary = new Dictionary<IntPtr, ExtendedData>();
 
-        internal static WeakKeyDictionary<ChaFileCoordinate, ExtendedData> InternalCoordinateDictionary = new WeakKeyDictionary<ChaFileCoordinate, ExtendedData>();
+        internal static Dictionary<IntPtr, ExtendedData> InternalCoordinateDictionary = new Dictionary<IntPtr, ExtendedData>();
 
 
         // Get a dictionary of ID, PluginData containing all extended data for a ChaFile
-        public static ExtendedData GetAllExtendedData(ChaFile file) => InternalCharaDictionary.Get(file);
+        public static ExtendedData GetAllExtendedData(ChaFile file) => InternalCharaDictionary.TryGetValue(file.Pointer, out ExtendedData data) ? data : null;
+
+        internal static void SetAllExtendedData(ChaFile file, ExtendedData data) => InternalCharaDictionary[file.Pointer] = data;
 
         // Get PluginData for a ChaFile for the specified extended save data ID
         public static PluginData GetExtendedDataById(ChaFile file, string id)
         {
             if (file == null || id == null)
+            {
                 return null;
+            }
+                
+            if (InternalCharaDictionary.TryGetValue(file.Pointer, out ExtendedData extendedData))
+            {
+                return extendedData.TryGetValue(id, out PluginData pluginData) ? pluginData : null;
+            }
 
-            var dict = InternalCharaDictionary.Get(file);
-
-            return dict != null && dict.TryGetValue(id, out var extendedSection) ? extendedSection : null;
+            return null;
         }
 
         // Set PluginData for a ChaFile for the specified extended save data ID
-        public static void SetExtendedDataById(ChaFile file, string id, PluginData extendedFormatData)
+        public static void SetExtendedDataById(ChaFile file, string id, PluginData pluginData)
         {
-            ExtendedData chaDictionary = InternalCharaDictionary.Get(file);
-
-            if (chaDictionary == null)
+            if (!InternalCharaDictionary.TryGetValue(file.Pointer, out ExtendedData extendedData))
             {
-                chaDictionary = new ExtendedData();
-                InternalCharaDictionary.Set(file, chaDictionary);
+                extendedData = new ExtendedData();
+                InternalCharaDictionary[file.Pointer] = extendedData;
             }
 
-            chaDictionary[id] = extendedFormatData;
+            extendedData[id] = pluginData;
         }
 
         // Get a dictionary of ID, PluginData containing all extended data for a ChaFileCoordinate
-        public static ExtendedData GetAllExtendedData(ChaFileCoordinate file) => InternalCoordinateDictionary.Get(file);
+        public static ExtendedData GetAllExtendedData(ChaFileCoordinate file) => InternalCoordinateDictionary.TryGetValue(file.Pointer, out ExtendedData data) ? data : null;
+
+        internal static void SetAllExtendedData(ChaFileCoordinate file, ExtendedData data) => InternalCoordinateDictionary[file.Pointer] = data;
 
         // Get PluginData for a ChaFileCoordinate for the specified extended save data ID
         public static PluginData GetExtendedDataById(ChaFileCoordinate file, string id)
         {
             if (file == null || id == null)
+            {
                 return null;
+            }
 
-            var dict = InternalCoordinateDictionary.Get(file);
+            if (InternalCoordinateDictionary.TryGetValue(file.Pointer, out ExtendedData extendedData))
+            {
+                return extendedData.TryGetValue(id, out PluginData pluginData) ? pluginData : null;
+            }
 
-            return dict != null && dict.TryGetValue(id, out var extendedSection) ? extendedSection : null;
+            return null;
         }
 
         // Set PluginData for a ChaFileCoordinate for the specified extended save data ID
-        public static void SetExtendedDataById(ChaFileCoordinate file, string id, PluginData extendedFormatData)
+        public static void SetExtendedDataById(ChaFileCoordinate file, string id, PluginData pluginData)
         {
-            ExtendedData chaDictionary = InternalCoordinateDictionary.Get(file);
-
-            if (chaDictionary == null)
+            if (!InternalCoordinateDictionary.TryGetValue(file.Pointer, out ExtendedData extendedData))
             {
-                chaDictionary = new ExtendedData();
-                InternalCoordinateDictionary.Set(file, chaDictionary);
+                extendedData = new ExtendedData();
+                InternalCoordinateDictionary[file.Pointer] = extendedData;
             }
 
-            chaDictionary[id] = extendedFormatData;
+            extendedData[id] = pluginData;
         }
 
         internal static byte[] MessagePackSerialize<T>(T obj)

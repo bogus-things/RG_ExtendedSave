@@ -84,7 +84,6 @@
     <Compile Include="Character\Character.Hooks.cs" />
     <Compile Include="Character\Character.Patches.cs" />
     <Compile Include="Events.cs" />
-    <Compile Include="Core\WeakKeyDictionary.cs" />
     <Compile Include="Core\ExtendedData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RGExtendedSavePlugin.cs" />

@@ -35,22 +35,25 @@ namespace RGExtendedSave
         public static ExtendedData Deserialize(byte[] bytes)
         {
             ExtendedData ext = new ExtendedData();
-            int count = Util.Get32BitInt(bytes, 0);
-            int cursor = 4;
-
-            for(int i = 0; i < count; i++)
+            if (bytes != null && bytes.Length > 0)
             {
-                byte[] keyBytes = Util.GetMessagePackStringBytes(bytes, cursor);
-                string key = ExtendedSave.MessagePackDeserialize<string>(new Il2CppStructArray<byte>(keyBytes));
-                cursor += keyBytes.Length;
+                int count = Util.Get32BitInt(bytes, 0);
+                int cursor = 4;
 
-                int dataSize = Util.Get32BitInt(bytes, cursor);
-                cursor += 4;
+                for (int i = 0; i < count; i++)
+                {
+                    byte[] keyBytes = Util.GetMessagePackStringBytes(bytes, cursor);
+                    string key = ExtendedSave.MessagePackDeserialize<string>(new Il2CppStructArray<byte>(keyBytes));
+                    cursor += keyBytes.Length;
 
-                PluginData data = PluginData.Deserialize(Util.GetSlice(bytes, cursor, cursor + dataSize));
-                cursor += dataSize;
+                    int dataSize = Util.Get32BitInt(bytes, cursor);
+                    cursor += 4;
 
-                ext.Add(key, data);
+                    PluginData data = PluginData.Deserialize(Util.GetSlice(bytes, cursor, cursor + dataSize));
+                    cursor += dataSize;
+
+                    ext.Add(key, data);
+                }
             }
 
             return ext;

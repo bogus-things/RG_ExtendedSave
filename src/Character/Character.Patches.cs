@@ -1,5 +1,6 @@
 ﻿using BepInEx.Logging;
 using Chara;
+using CharaCustom;
 using Il2CppSystem.IO;
 using Il2CppSystem.Threading;
 using Illusion.IO;
@@ -11,6 +12,7 @@ namespace RGExtendedSave.Character
     {
         private static ManualLogSource Log = RGExtendedSavePlugin.Log;
         internal static bool CardReadEventCalled;
+        internal static CustomControl CustomCtrl;
 
         internal static void PreLoad()
         {
@@ -31,6 +33,7 @@ namespace RGExtendedSave.Character
             int count = br.ReadInt32();
             BlockHeader blockHeader = MessagePackSerializer.Deserialize<BlockHeader>(br.ReadBytes(count), null, CancellationToken.None);
             BlockHeader.Info info = blockHeader.SearchInfo(ExtendedSave.Marker);
+            ChaFile targetFile = CustomCtrl?.chaFile != null ? CustomCtrl.chaFile : cf;
 
             if (info != null && info.version == ExtendedSave.DataVersion.ToString())
             {
@@ -46,29 +49,29 @@ namespace RGExtendedSave.Character
                 br.BaseStream.Position = originalPos;
 
                 CardReadEventCalled = true;
-
+                
                 try
                 {
                     ExtendedData extData = ExtendedData.Deserialize(data);
-                    ExtendedSave.InternalCharaDictionary.Set(cf, extData);
+                    ExtendedSave.SetAllExtendedData(targetFile, extData);
                 }
                 catch (System.Exception e)
                 {
-                    ExtendedSave.InternalCharaDictionary.Set(cf, new ExtendedData());
+                    ExtendedSave.SetAllExtendedData(targetFile, new ExtendedData());
                     Log.LogWarning($"Invalid or corrupted extended data in card \"{cf.CharaFileName}\" - {e.Message}");
                 }
 
-                Events.CardReadEvent(cf);
+                Events.CardReadEvent(targetFile);
             }
             else
             {
-                ExtendedSave.InternalCharaDictionary.Set(cf, new ExtendedData());
+                ExtendedSave.SetAllExtendedData(targetFile, new ExtendedData());
             }
 
             if (CardReadEventCalled == false)
             {
-                ExtendedSave.InternalCharaDictionary.Set(cf, new ExtendedData());
-                Events.CardReadEvent(cf);
+                ExtendedSave.SetAllExtendedData(targetFile, new ExtendedData());
+                Events.CardReadEvent(targetFile);
             }
         }
 

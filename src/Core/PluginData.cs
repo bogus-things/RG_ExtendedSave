@@ -25,9 +25,12 @@ namespace RGExtendedSave
         {
             PluginData pd = new PluginData();
 
-            pd.version = Util.Get32BitInt(bytes, 0);
-            byte[] data = Util.GetSlice(bytes, 4);
-            pd.data = Util.DictFromIl2Cpp(ExtendedSave.MessagePackDeserialize<Il2CppSystem.Collections.Generic.Dictionary<string, string>>(new Il2CppStructArray<byte>(data)));
+            if (bytes != null && bytes.Length > 0)
+            {
+                pd.version = Util.Get32BitInt(bytes, 0);
+                byte[] data = Util.GetSlice(bytes, 4);
+                pd.data = Util.DictFromIl2Cpp(ExtendedSave.MessagePackDeserialize<Il2CppSystem.Collections.Generic.Dictionary<string, string>>(new Il2CppStructArray<byte>(data)));
+            }
 
             return pd;
         }

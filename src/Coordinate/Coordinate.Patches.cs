@@ -75,24 +75,24 @@ namespace RGExtendedSave.Coordinate
                                         if (!ExtendedSave.LoadEventsEnabled)
                                         {
                                             br.BaseStream.Seek(length, SeekOrigin.Current);
-                                            ExtendedSave.InternalCoordinateDictionary.Set(cfc, new ExtendedData());
+                                            ExtendedSave.SetAllExtendedData(cfc, new ExtendedData());
                                         }
                                         else
                                         {
                                             byte[] bytes = br.ReadBytes(length);
                                             ExtendedData extData = ExtendedData.Deserialize(bytes);
-                                            ExtendedSave.InternalCoordinateDictionary.Set(cfc, extData);
+                                            ExtendedSave.SetAllExtendedData(cfc, extData);
                                         }
                                     }
                                     else
                                     {
                                         //Overriding with empty data just in case there is some remnant from former loads.
-                                        ExtendedSave.InternalCoordinateDictionary.Set(cfc, new ExtendedData()); 
+                                        ExtendedSave.SetAllExtendedData(cfc, new ExtendedData()); 
                                     }
                                 }
                                 catch (System.Exception)
                                 {
-                                    ExtendedSave.InternalCoordinateDictionary.Set(cfc, new ExtendedData());
+                                    ExtendedSave.SetAllExtendedData(cfc, new ExtendedData());
                                 }
 
                                 Events.CoordinateReadEvent(cfc);

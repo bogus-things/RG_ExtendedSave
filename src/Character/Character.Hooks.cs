@@ -3,6 +3,7 @@ using HarmonyLib;
 using Chara;
 using Il2CppSystem.IO;
 using CharaCustom;
+using UnityEngine;
 
 namespace RGExtendedSave.Character
 {
@@ -12,6 +13,8 @@ namespace RGExtendedSave.Character
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(CustomCharaFileInfoAssist), nameof(CustomCharaFileInfoAssist.AddList))]
+        [HarmonyPatch(typeof(CvsO_CharaLoad), nameof(CvsO_CharaLoad.UpdateCharasList))]
+        [HarmonyPatch(typeof(CvsO_CharaSave), nameof(CvsO_CharaSave.UpdateCharasList))]
         private static void AddListPre()
         {
             ExtendedSave.LoadEventsEnabled = false;
@@ -19,9 +22,25 @@ namespace RGExtendedSave.Character
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(CustomCharaFileInfoAssist), nameof(CustomCharaFileInfoAssist.AddList))]
+        [HarmonyPatch(typeof(CvsO_CharaLoad), nameof(CvsO_CharaLoad.UpdateCharasList))]
+        [HarmonyPatch(typeof(CvsO_CharaSave), nameof(CvsO_CharaSave.UpdateCharasList))]
         private static void AddListPost()
         {
             ExtendedSave.LoadEventsEnabled = true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CustomControl), nameof(CustomControl.InitializeUI))]
+        private static void CustomAwakePost(CustomControl __instance)
+        {
+            Patches.CustomCtrl = __instance; 
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CharaCustom.CharaCustom), nameof(CharaCustom.CharaCustom.OnDestroy))]
+        private static void CustomDestroyPost()
+        {
+            Patches.CustomCtrl = null;
         }
 
         [HarmonyPrefix]

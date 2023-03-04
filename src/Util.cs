@@ -41,6 +41,11 @@ namespace RGExtendedSave
 
         internal static int Get32BitInt(byte[] bytes, int pos)
         {
+            if (bytes.Length < 4)
+            {
+                return 0;
+            }
+
             byte[] b = GetSlice(bytes, pos, pos + 4);
             return BitConverter.ToInt32(b, 0);
         }
@@ -49,6 +54,10 @@ namespace RGExtendedSave
         {
             int length = to - from;
             T[] result = new T[length];
+            if (length > arr.Length)
+            {
+                return new T[0];
+            }
             Array.Copy(arr, from, result, 0, length);
 
             return result;
