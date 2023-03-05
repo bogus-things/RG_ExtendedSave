@@ -3,7 +3,6 @@ using HarmonyLib;
 using Chara;
 using Il2CppSystem.IO;
 using CharaCustom;
-using UnityEngine;
 
 namespace RGExtendedSave.Character
 {
@@ -64,7 +63,6 @@ namespace RGExtendedSave.Character
         [HarmonyPatch(typeof(ChaFile), nameof(ChaFile.SaveFile), new[] { typeof(BinaryWriter), typeof(bool), typeof(int) })]
         private static bool SaveFilePre(ChaFile __instance, BinaryWriter bw, bool savePng, int lang, ref bool __result)
         {
-            Core.Hooks.ChaFileSaveFilePreHook(__instance);
             __result = Patches.SaveFile(__instance, bw, savePng, lang);
 
             return false;

@@ -72,17 +72,9 @@ namespace RGExtendedSave.Coordinate
 
                                     if (marker == ExtendedSave.Marker && version == ExtendedSave.DataVersion && length > 0)
                                     {
-                                        if (!ExtendedSave.LoadEventsEnabled)
-                                        {
-                                            br.BaseStream.Seek(length, SeekOrigin.Current);
-                                            ExtendedSave.SetAllExtendedData(cfc, new ExtendedData());
-                                        }
-                                        else
-                                        {
-                                            byte[] bytes = br.ReadBytes(length);
-                                            ExtendedData extData = ExtendedData.Deserialize(bytes);
-                                            ExtendedSave.SetAllExtendedData(cfc, extData);
-                                        }
+                                        byte[] bytes = br.ReadBytes(length);
+                                        ExtendedData extData = ExtendedData.Deserialize(bytes);
+                                        ExtendedSave.SetAllExtendedData(cfc, extData);
                                     }
                                     else
                                     {

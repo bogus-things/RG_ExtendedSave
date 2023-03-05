@@ -90,7 +90,7 @@
     <Compile Include="Util.cs" />
     <Compile Include="ExtendedSave.cs" />
     <Compile Include="Core\PluginData.cs" />
-    <Compile Include="Core\Hooks.cs" />
+    <Compile Include="ExtendedSave.Hooks.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

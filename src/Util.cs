@@ -68,25 +68,102 @@ namespace RGExtendedSave
             return GetSlice(arr, from, arr.Length);
         }
 
-        internal static Il2CppSystem.Collections.Generic.Dictionary<TKey, TValue> DictToIl2Cpp<TKey, TValue>(Dictionary<TKey, TValue> dict)
+        internal static Il2CppSystem.Collections.Generic.Dictionary<string, string> DataToIl2Cpp(Dictionary<string, object> dict)
         {
-            Il2CppSystem.Collections.Generic.Dictionary<TKey, TValue> cppDict = new Il2CppSystem.Collections.Generic.Dictionary<TKey, TValue>();
+            Il2CppSystem.Collections.Generic.Dictionary<string, string> cppDict = new Il2CppSystem.Collections.Generic.Dictionary<string, string>();
 
-            foreach(KeyValuePair<TKey, TValue> kv in dict)
+            foreach(KeyValuePair<string, object> kv in dict)
             {
-                cppDict.Add(kv.Key, kv.Value);
+                Type t = kv.Value.GetType();
+                if ((!t.IsPrimitive && t != typeof(string)) || t == typeof(IntPtr) || t == typeof(UIntPtr))
+                {
+                    throw new ArgumentException($"Unsupported type {t}. Only non-pointer primitive types & strings are supported. Serialize your data first.");
+                }
+
+                string value = $"{t}::{kv.Value}";
+                cppDict.Add(kv.Key, value);
             }
 
             return cppDict;
         }
 
-        internal static Dictionary<TKey, TValue> DictFromIl2Cpp<TKey, TValue>(Il2CppSystem.Collections.Generic.Dictionary<TKey, TValue> cppDict)
+        internal static Dictionary<string, object> DataFromIl2Cpp(Il2CppSystem.Collections.Generic.Dictionary<string, string> cppDict)
         {
-            Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
 
-            foreach(Il2CppSystem.Collections.Generic.KeyValuePair<TKey, TValue> kv in cppDict)
+            foreach(Il2CppSystem.Collections.Generic.KeyValuePair<string, string> kv in cppDict)
             {
-                dict.Add(kv.Key, kv.Value);
+                int separatorIndex = kv.Value.IndexOf("::");
+                object pValue;
+                if (separatorIndex > -1)
+                {
+                    string pType = kv.Value.Substring(0, separatorIndex);
+                    string pStr = kv.Value.Substring(separatorIndex + 2);
+
+                    Type t = Type.GetType(pType);
+                    if (t == typeof(string))
+                    {
+                        pValue = pStr;
+                    }
+                    else if (t == typeof(bool))
+                    {
+                        pValue = bool.Parse(pStr);
+                    }
+                    else if (t == typeof(byte))
+                    {
+                        pValue = byte.Parse(pStr);
+                    }
+                    else if (t == typeof(sbyte))
+                    {
+                        pValue = sbyte.Parse(pStr);
+                    }
+                    else if (t == typeof(short))
+                    {
+                        pValue = short.Parse(pStr);
+                    }
+                    else if (t == typeof(ushort))
+                    {
+                        pValue = ushort.Parse(pStr);
+                    }
+                    else if (t == typeof(int))
+                    {
+                        pValue = int.Parse(pStr);
+                    }
+                    else if (t == typeof(uint))
+                    {
+                        pValue = uint.Parse(pStr);
+                    }
+                    else if (t == typeof(long))
+                    {
+                        pValue = long.Parse(pStr);
+                    }
+                    else if (t == typeof(ulong))
+                    {
+                        pValue = ulong.Parse(pStr);
+                    }
+                    else if (t == typeof(char))
+                    {
+                        pValue = char.Parse(pStr);
+                    }
+                    else if (t == typeof(double))
+                    {
+                        pValue = double.Parse(pStr);
+                    }
+                    else if (t == typeof(float))
+                    {
+                        pValue = float.Parse(pStr);
+                    }
+                    else
+                    {
+                        pValue = pStr;
+                    }
+                }
+                else
+                {
+                    pValue = kv.Value;
+                }
+
+                dict.Add(kv.Key, pValue);
             }
 
             return dict;

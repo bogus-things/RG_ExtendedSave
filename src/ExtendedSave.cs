@@ -94,6 +94,12 @@ namespace RGExtendedSave
             extendedData[id] = pluginData;
         }
 
+        internal static void ClearData()
+        {
+            InternalCharaDictionary.Clear();
+            InternalCoordinateDictionary.Clear();
+        }
+
         internal static byte[] MessagePackSerialize<T>(T obj)
         {
             if (resolver == null)

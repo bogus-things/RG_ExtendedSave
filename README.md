@@ -6,8 +6,7 @@ A (limited) port of the ExtendedSave/ExtensibleSaveFormat plugins in [BepisPlugi
 - Provides API to add data to & read from character cards & outfits via `ExtendedSave` in `RG_ExtendedSave.dll`
 
 ## Limitations
-- Currently `PluginData` only supports string values for its dictionary (fix in progress)
-- No support for the `Extensions` methods in the BepisPlugins original (fix impossible?)
+- No support for the `Extensions` methods in the BepisPlugins original (might be possible to reimplement this using IntPtr maps, investigating)
 - No studio support yet
 
 ## Requirements

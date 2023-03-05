@@ -21,6 +21,7 @@ namespace RGExtendedSave
 
             Harmony.CreateAndPatchAll(typeof(Character.Hooks), $"{GUID}-character");
             Harmony.CreateAndPatchAll(typeof(Coordinate.Hooks), $"{GUID}-coordinate");
+            Harmony.CreateAndPatchAll(typeof(ExtendedSaveHooks), $"{GUID}-extended-save");
         }
     }
 }
