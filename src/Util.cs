@@ -1,7 +1,9 @@
 ﻿using BepInEx.Logging;
 using Chara;
+using Il2CppSystem.IO;
 using System;
 using System.Collections.Generic;
+using UnhollowerBaseLib;
 
 namespace RGExtendedSave
 {
@@ -48,6 +50,11 @@ namespace RGExtendedSave
 
             byte[] b = GetSlice(bytes, pos, pos + 4);
             return BitConverter.ToInt32(b, 0);
+        }
+
+        internal static Il2CppStructArray<byte> GetStructArraySlice(Il2CppStructArray<byte> arr, int from)
+        {
+            return new Il2CppStructArray<byte>(GetSlice((byte[])arr, from, arr.Length));
         }
 
         internal static T[] GetSlice<T>(T[] arr, int from, int to)
@@ -205,5 +212,61 @@ namespace RGExtendedSave
 
             return extendedData.Serialize();
         }
-    }
+
+        internal static IntPtr ReadBlock<T>(BinaryReader br, T obj) where T : Il2CppSystem.Object
+        {
+            int count = br.ReadInt32();
+            if (count > 0)
+            {
+                Il2CppStructArray<byte> bytes = br.ReadBytes(count);
+                Extensions.SetBytes(obj, bytes);
+                return obj.Pointer;
+            }
+            return default;
+        }
+
+        internal static void WriteBlock<T>(BinaryWriter bw, T obj) where T : Il2CppSystem.Object
+        {
+            byte[] bytes = Extensions.GetBytes(obj);
+            if (bytes != null && bytes.Length > 0)
+            {
+                bw.Write(bytes.Length);
+                bw.Write(bytes);
+            }
+            else
+            {
+                bw.Write(0);
+            }
+        }
+
+        internal static (int, int) FindBlockStart(byte[] bytes)
+        {
+            char[] marker = $"«{ExtendedSave.Marker}»".ToCharArray();
+            int i;
+            for (i = bytes.Length - 1; i >= 0; i--)
+            {
+                if (i + marker.Length > bytes.Length - 1)
+                {
+                    continue;
+                }
+
+                bool match = true;
+                for (int j = 0; j < marker.Length; j++)
+                {
+                    if (marker[j] != bytes[i + j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                
+                if (match)
+                {
+                    break;
+                }
+            }
+
+            return (i, marker.Length);
+        }
+    }    
 }

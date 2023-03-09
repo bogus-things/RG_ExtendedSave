@@ -4,10 +4,71 @@ A (limited) port of the ExtendedSave/ExtensibleSaveFormat plugins in [BepisPlugi
 ## Features
 - Hooks into Save & Load methods for characters & outfits to provide support for extended save data
 - Provides API to add data to & read from character cards & outfits via `ExtendedSave` in `RG_ExtendedSave.dll`
+- Provides API to add data to & read from additional character card classes via `Extensions`
+- Exposes simple, subscribable save/load events for character & outfit cards via `Events`
 
 ## Limitations
-- No support for the `Extensions` methods in the BepisPlugins original (might be possible to reimplement this using IntPtr maps, investigating)
 - No studio support yet
+
+## Usage
+
+### `PluginData`
+
+`PluginData` is the primary class for storing extended save data for a plugin. It has two properties:
+- `version` - An integer version you can set for comparing/handling older vs newer data
+- `data` - A `string`, `object` dictionary you can use to manage your plugin data. Supported value types include strings and all primitives except for pointers
+
+Using `PluginData` will usually look something like this:
+```c#
+PluginData myData = new PluginData();
+myData.version = 1;
+myData.data.add("myKey", "myValue");
+myData.data.add("myOtherKey", 420);
+```
+
+### `ExtendedSave`
+
+`ExtendedSave` provides several static methods for managing your plugin's extended data at the `ChaFile` level:
+- `GetAllExtendedData(ChaFile)` - Returns the data for every plugin attached to the `ChaFile` as an instance of `ExtendedData` (which is just a `string`, `PluginData` dictionary)
+- `GetExtendedDataById(ChaFile, string)` - Attempts to find & return the `PluginData` stored under the provided string key. Returns null if no data is found
+- `SetExtendedDataById(ChaFile, string, Plugindata)` - Attaches `PluginData` to the specified `ChaFile`, under the provided string key
+
+The above methods are also all available for `ChaFileCoordinate` -- i.e. `GetAllExtendedDataById(ChaFileCOordinate, string)` -- so you can attach data to clothing cards as well.
+
+### `Extensions`
+
+`Extensions` provides additional static methods for binding & managing plugin data on some of the classes which make up `ChaFile`:
+- `GetAllExtendedData(obj)` - Returns the data for every plugin attached to the provided object as an instance of `ExtendedData` (which is just a `string`, `PluginData` dictionary)
+- `TryGetExtendedDataById(obj, string, out PluginData)` - Attempts to retrieve the `PluginData` stored under the provided string key. Returns false if no data is found
+- `SetExtendedDataById(obj, string, Plugindata)` - Attaches `PluginData` to the specified object, under the provided string key
+
+The `Extensions` methods support the following types for `obj`:
+- `ChaFileBody`
+- `ChaFileFace`
+- `ChaFileFace.EyesInfo`
+- `ChaFileFace.MakeupInfo`
+- `ChaFileHair`
+- `ChaFileHair.PartsInfo`
+- `ChaFileHair.PartsInfo.ColorInfo`
+- `ChaFileClothes.PartsInfo`
+- `ChaFileClothes.PartsInfo.ColorInfo`
+- `ChaFileAccessory.PartsInfo`
+- `ChaFileAccessory.PartsInfo.ColorInfo`
+
+Additionally, extended data can be set for `ChaFileHair.PartsInfo.BundleInfo` using slightly different arguments:
+- `GetAllExtendedData(ChaFileClothes.PartsInfo obj, int bundleId, string id)`
+- `TryGetExtendedDataById(ChaFileClothes.PartsInfo obj, int bundleId, string id, out PluginData data)`
+- `SetExtendedDataById(ChaFileClothes.PartsInfo obj, int bundleId, string id, PluginData data)`
+
+### `Events`
+
+`Events` exposes some basic save/load events which fire when character & outfit cards are saved or loaded:
+- `CardBeingSaved` - On character card save
+- `CardBeingLoaded` - On character card load
+- `CoordinateBeingSaved` - On outfit card save
+- `CoordinateBeingLoaded` - On outfit card load
+
+You can subscribe to any of these events with a handler function that accepts a single `ChaFile` or `ChaFileCoordinate` argument depending on the event.
 
 ## Requirements
 - BetterRepack >= R1.4 (untested on lower versions or other configurations)

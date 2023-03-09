@@ -57,7 +57,7 @@ namespace RGExtendedSave.Coordinate
                             cfc.coordinateName = br.ReadString();
                             int count = br.ReadInt32();
                             byte[] data = br.ReadBytes(count);
-                            if (cfc.LoadBytes(data, cfc.loadVersion, clothes, accessory, hair))
+                            if (Ext.Patches.CoordinateLoadBytes(cfc, data, cfc.loadVersion, clothes, accessory, hair))
                             {
                                 cfc.lastLoadErrorCode = 0;
                                 result = true;
@@ -136,7 +136,7 @@ namespace RGExtendedSave.Coordinate
                     bw.Write(ChaFileDefine.ChaFileCoordinateVersion.ToString());
                     bw.Write(lang);
                     bw.Write(cfc.coordinateName);
-                    byte[] array = cfc.SaveBytes();
+                    byte[] array = Ext.Patches.CoordinateSaveBytes(cfc);
                     bw.Write(array.Length);
                     bw.Write(array);
 

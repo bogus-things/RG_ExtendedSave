@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2426C56-5E6F-444A-94F8-F3626CED5E9E}</ProjectGuid>
+    <ProjectGuid>{94868C82-C6C2-4EC3-9084-662D6392D2C3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RGExtendedSave</RootNamespace>
-    <AssemblyName>RG_ExtendedSave</AssemblyName>
+    <RootNamespace>RGExtendedSaveTester</RootNamespace>
+    <AssemblyName>RG_ExtendedSaveTester</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -51,6 +51,10 @@
       <HintPath>C:\Games\RoomGirl\BepInEx\Unhollowed\RoomGirl\unhollowed\MessagePack.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RG_ExtendedSave">
+      <HintPath>..\..\..\..\..\..\Games\RoomGirl\BepInEx\plugins\RG_ExtendedSave.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="0Harmony">
@@ -77,34 +81,19 @@
       <HintPath>C:\Games\RoomGirl\BepInEx\Unhollowed\RoomGirl\unhollowed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UniverseLib.IL2CPP.Unhollower">
+      <HintPath>..\..\..\..\..\..\Games\RoomGirl\BepInEx\plugins\UniverseLib.IL2CPP.Unhollower.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Coordinate\Coordinate.Hooks.cs" />
-    <Compile Include="Coordinate\Coordinate.Patches.cs" />
-    <Compile Include="Character\Character.Hooks.cs" />
-    <Compile Include="Character\Character.Patches.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="Core\ExtendedData.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Ext\Coordinate.cs" />
-    <Compile Include="Ext\Custom.cs" />
-    <Compile Include="Ext\ExtKeyContainer.cs" />
-    <Compile Include="Ext\Ext.Hooks.cs" />
-    <Compile Include="Ext\Ext.Patches.cs" />
-    <Compile Include="Ext\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RGExtendedSavePlugin.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="ExtendedSave.cs" />
-    <Compile Include="Core\PluginData.cs" />
-    <Compile Include="ExtendedSave.Hooks.cs" />
+    <Compile Include="RGExtendedSaveTesterPlugin.cs" />
+    <Compile Include="TestController.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PostBuildEvent>PowerShell $(SolutionDir)release.ps1</PostBuildEvent>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <PostBuildEvent>xcopy $(SolutionDir)src\bin\Debug\RG_ExtendedSave.dll C:\Games\RoomGirl\BepInEx\plugins\RG_ExtendedSave.dll* /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(SolutionDir)test\bin\Debug\RG_ExtendedSaveTester.dll C:\Games\RoomGirl\BepInEx\plugins\RG_ExtendedSaveTester.dll* /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

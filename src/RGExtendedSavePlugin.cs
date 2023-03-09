@@ -2,6 +2,7 @@
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnhollowerRuntimeLib;
 
 namespace RGExtendedSave
 {
@@ -11,7 +12,7 @@ namespace RGExtendedSave
     {
         public const string PluginName = "RG ExtendedSave";
         public const string GUID = "com.bogus.RGExtendedSave";
-        public const string Version = "0.0.1";
+        public const string Version = "0.0.2";
 
         internal static new ManualLogSource Log;
 
@@ -21,7 +22,10 @@ namespace RGExtendedSave
 
             Harmony.CreateAndPatchAll(typeof(Character.Hooks), $"{GUID}-character");
             Harmony.CreateAndPatchAll(typeof(Coordinate.Hooks), $"{GUID}-coordinate");
+            Harmony.CreateAndPatchAll(typeof(Ext.Hooks), $"{GUID}-extensions");
             Harmony.CreateAndPatchAll(typeof(ExtendedSaveHooks), $"{GUID}-extended-save");
+
+            ClassInjector.RegisterTypeInIl2Cpp<PluginData>();
         }
     }
 }

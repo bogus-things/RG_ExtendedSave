@@ -98,6 +98,7 @@ namespace RGExtendedSave
         {
             InternalCharaDictionary.Clear();
             InternalCoordinateDictionary.Clear();
+            Extensions.InternalExtDictionary.Clear();
         }
 
         internal static byte[] MessagePackSerialize<T>(T obj)
