@@ -12,6 +12,8 @@ A (limited) port of the ExtendedSave/ExtensibleSaveFormat plugins in [BepisPlugi
 
 ## Usage
 
+Check out the [TestController](https://github.com/bogus-things/RG_ExtendedSave/blob/develop/test/TestController.cs) for some examples on setting & getting plugin data.
+
 ### `PluginData`
 
 `PluginData` is the primary class for storing extended save data for a plugin. It has two properties:
