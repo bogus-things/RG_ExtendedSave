@@ -4,7 +4,7 @@ using System;
 
 namespace RGExtendedSave
 {
-    internal class Events
+    public class Events
     {
         private static ManualLogSource Log = RGExtendedSavePlugin.Log;
 
